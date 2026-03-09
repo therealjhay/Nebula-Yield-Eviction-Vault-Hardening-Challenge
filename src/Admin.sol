@@ -5,27 +5,26 @@ import "./Storage.sol";
 
 abstract contract Admin is Storage {
 
+    // sets MerkleRoot callable by anyone
     function setMerkleRoot(bytes32 root) external {
-
-        require(msg.sender == address(this), "Only multisig"); // setMerkleRoot callable by anyone
-
+        // Enforce that only a successfully executed multisig transaction can call this
+        require(msg.sender == address(this), "Only multisig");
         merkleRoot = root;
-
         emit MerkleRootSet(root);
     }
 
-
-    function pause() external {
-
-        require(msg.sender == address(this), "Only multisig"); // pause single owner control
+   // Pause single Owner control
+    function pauseControl() external {
+        // Enforce that only the multisig can trigger an emergency pause
+        require(msg.sender == address(this), "Only multisig"); 
 
         paused = true;
     }
 
-
-    function unpause() external {
-
-        require(msg.sender == address(this), "Only multisig"); // unpause single owner control
+    // Unpauses the vault, restoring normal operations.
+    function unpauseControl() external {
+        // Enforce that only the multisig can unpause the contract once resolved
+        require(msg.sender == address(this), "Only multisig");
 
         paused = false;
     }

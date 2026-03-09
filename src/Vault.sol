@@ -18,11 +18,12 @@ contract Vault is Multisig, Admin {
             isOwner[o] = true;
             owners.push(o);
         }
+        
         totalVaultValue = msg.value;
     }
 
     receive() external payable {
-        balances[msg.sender] += msg.value; // FIX: receive() uses tx.origin
+        balances[msg.sender] += msg.value;
         totalVaultValue += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
@@ -36,23 +37,31 @@ contract Vault is Multisig, Admin {
     function withdraw(uint256 amount) external {
         require(!paused, "paused");
         require(balances[msg.sender] >= amount, "insufficient balance");
+        
         balances[msg.sender] -= amount;
         totalVaultValue -= amount;
-        (bool success, ) = msg.sender.call{value: amount}(""); // FIX: withdraw uses .transfer
+        
+        (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "transfer failed");
+        
         emit Withdrawal(msg.sender, amount);
     }
 
     function claim(bytes32[] calldata proof, uint256 amount) external {
         require(!paused, "paused");
+        
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         bytes32 computed = MerkleProof.processProof(proof, leaf);
         require(computed == merkleRoot, "invalid proof");
+        
         require(!claimed[msg.sender], "already claimed");
         claimed[msg.sender] = true;
+        
         totalVaultValue -= amount;
-        (bool success, ) = msg.sender.call{value: amount}(""); // FIX: claim uses .transfer
+        
+        (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "transfer failed");
+        
         emit Claim(msg.sender, amount);
     }
 
@@ -61,15 +70,16 @@ contract Vault is Multisig, Admin {
         bytes32 messageHash,
         bytes memory signature
     ) external pure returns (bool) {
-        // FIX: The original code used MerkleProof.recover, but recovery is done via ECDSA.
         return ECDSA.recover(messageHash, signature) == signer;
     }
 
-    function emergencyWithdrawAll(address to) external { // FIX: emergencyWithdrawAll public drain
+    function emergencyWithdrawAll(address to) external {
         require(msg.sender == address(this), "Only multisig");
         require(to != address(0), "zero address");
+        
         uint256 amount = address(this).balance;
         totalVaultValue = 0;
+        
         (bool success, ) = to.call{value: amount}("");
         require(success, "transfer failed");
     }

@@ -1,6 +1,6 @@
 # Nebula Yield – Eviction Vault Hardening Challenge
 
-This project represents the completion of the Phase 1 - Day 1 Milestone for the Nebula Yield – Eviction Vault Hardening Challenge. 
+This project represents the completion of the Phase 1 - Day 1 Milestone for the Nebula Yield – Eviction Vault Hardening Challenge.
 
 The monolithic `EvictionVault.sol` contract has been successfully refactored into a modular architecture to improve maintainability, separation of concerns, and most importantly, security.
 
@@ -26,7 +26,6 @@ During the refactoring, the following critical vulnerabilities were fixed:
 
 ## Testing
 
-A comprehensive test suite was added in `test/Vault.t.sol` which includes tests for:
 - Successful deposit and withdrawal.
 - Complete multisig flow (Submission, Confirmation, Timelock, and Execution).
 - Merkle root setting via multisig and subsequent successful user claims.
@@ -34,6 +33,7 @@ A comprehensive test suite was added in `test/Vault.t.sol` which includes tests 
 - Explicit verification of the Timelock Execution Bypass fix.
 
 Run tests using:
+
 ```bash
 forge test -vvv
 ```

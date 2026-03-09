@@ -48,7 +48,7 @@ contract VaultTest is Test {
     
     function testMultisigFlowAndPause() public {
         // Test Multisig pausing the contract
-        bytes memory pauseData = abi.encodeWithSignature("pause()");
+        bytes memory pauseData = abi.encodeWithSignature("pauseControl()");
         
         vm.prank(owner1);
         vault.submitTransaction(address(vault), 0, pauseData);
@@ -63,8 +63,8 @@ contract VaultTest is Test {
         
         assertTrue(vault.paused());
         
-        // Unpause
-        bytes memory unpauseData = abi.encodeWithSignature("unpause()");
+        // Unpause control
+        bytes memory unpauseData = abi.encodeWithSignature("unpauseControl()");
         vm.prank(owner1);
         vault.submitTransaction(address(vault), 0, unpauseData);
         vm.prank(owner2);
@@ -135,7 +135,7 @@ contract VaultTest is Test {
         
         Vault singleVault = new Vault{value: 10 ether}(singleOwner, 1);
         
-        bytes memory pauseData = abi.encodeWithSignature("pause()");
+        bytes memory pauseData = abi.encodeWithSignature("pauseControl()");
         vm.prank(owner1);
         singleVault.submitTransaction(address(singleVault), 0, pauseData);
         
